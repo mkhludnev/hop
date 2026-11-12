@@ -326,6 +326,7 @@ under the License.
 *** xref:pipeline/transforms/splitfields.adoc[Split Fields]
 *** xref:pipeline/transforms/splitfieldtorows.adoc[Split fields to rows]
 *** xref:pipeline/transforms/split-graph.adoc[Split graph]
+*** xref:pipeline/transforms/solroutput.adoc[Solr output]
 *** xref:pipeline/transforms/splunkinput.adoc[Splunk input]
 *** xref:pipeline/transforms/sqlfileoutput.adoc[SQL File Output]
 *** xref:pipeline/transforms/standardizephonenumber.adoc[Standardize Phone Number]
