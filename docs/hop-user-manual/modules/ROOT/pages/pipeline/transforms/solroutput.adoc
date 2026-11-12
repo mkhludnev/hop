@@ -1,0 +1,66 @@
+////
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements. See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership. The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License. You may obtain a copy of the License at
+  http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied. See the License for the
+specific language governing permissions and limitations
+under the License.
+////
+:documentationPath: /pipeline/transforms/
+:language: en_US
+:description: Index JSON documents, including nested documents, with SolrJ.
+:page-engines: Hop Engine=yes, Single Threaded=yes, Native Spark=no, Beam Spark=no, Beam Flink=no, Beam Dataflow=no
+
+= Solr output
+
+The Solr output transform indexes one JSON document from each incoming row using SolrJ.
+It sends each document synchronously and passes the original row on only after Solr accepts the update.
+An invalid document or failed update fails the transform.
+
+== Options
+
+[options="header"]
+|===
+|Option|Description
+|Solr collection or core URL
+|HTTP(S) URL including the core or collection name, for example `http://localhost:8983/solr/products`.
+|JSON document field
+|Input field containing a JSON object for each row.
+|Commit within (milliseconds)
+|Optional positive integer. If empty, Solr's configured commit policy applies.
+An accepted update is not necessarily immediately visible to searches.
+|===
+
+The URL and commit-within option support Hop variables. This transform does not configure authentication.
+Use a URL reachable from each Hop worker and configure the Solr server's authentication and TLS appropriately.
+
+== Nested documents
+
+JSON objects become named child documents and arrays of objects become lists of named child documents.
+Arrays of scalar values become multivalued fields. `_childDocuments_` is also supported for unnamed child documents.
+Mixed object/scalar arrays and nested arrays are rejected. The root must be a single JSON object.
+Integers must fit in a signed 64-bit value; floating-point numbers are represented as double precision.
+
+[source,json]
+----
+{
+  "id": "product-1",
+  "name": "Jacket",
+  "tags": ["outerwear", "winter"],
+  "skus": [
+    {"id": "sku-1", "color": "blue", "manual": {"id": "manual-1", "title": "Care"}}
+  ]
+}
+----
+
+Configure Solr's schema for nested documents, including `_root_` and, for named paths, `_nest_path_`.
+All document IDs must satisfy the collection's unique-key requirements.
+See the https://solr.apache.org/guide/solr/latest/indexing-guide/indexing-nested-documents.html[Solr nested documents guide].
